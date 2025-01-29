@@ -12,11 +12,18 @@ import os
 import sys
 import numpy as np
 import pandas as pd
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
 
 def main():
 
-    #Recipients = 'Keaton Manwaring <keaton@blackstoneproducts.com>'
-    Recipients = 'Christian Elkins<christian@blackstoneproducts.com>;Steven Bassett<steveb@blackstoneproducts.com>;Chloe Bowman<chloe@blackstoneproducts.com>; Canon Schenk<Canon.schenk@blackstoneproducts.com>; Cameron Gardner<cameron.gardner@blackstoneproducts.com>;Kalin Hansen<kalin.hansen@blackstoneproducts.com>;Abby Griffeth<abbyg@blackstoneproducts.com>;Chris  Tucket <tchris@blackstoneproducts.com>;Spencer Stratton <spencer@blackstoneproducts.com>;Aaron Smart <aaron@blackstoneproducts.com>; Logan Rondash <logan@blackstoneproducts.com>; Chris Brown <chris@blackstoneproducts.com>; Darren Cole <darren@blackstoneproducts.com>; David Anderson <davida@blackstoneproducts.com>; Joyce Jensen <Joyce@blackstoneproducts.com>; Keaton Manwaring <keaton@blackstoneproducts.com>; Kjersti Green <kgreen@blackstoneproducts.com>; Kyler Hansen <kyler@blackstoneproducts.com>; Mark Malen <mark@blackstoneproducts.com>; Michael Jenkins <mjenkins@blackstoneproducts.com>; Mike Midgley <mike@blackstoneproducts.com>; Mike Moser <mike.moser@blackstoneproducts.com>; Perry Jensen <Perry@blackstoneproducts.com>; Ty H <ty@blackstoneproducts.com>; Tom Newman <tom@blackstoneproducts.com>; Nicholle Anderson <nicholle@blackstoneproducts.com>; Clayton Shaw <clayton@blackstoneproducts.com>;  Holley Creger <Holley@blackstoneproducts.com>; Venessa P <venessa@blackstoneproducts.com>; Travis Cox <travis@blackstoneproducts.com>; Jake D <Jake@blackstoneproducts.com>; Brad Wheelwright <brad@blackstoneproducts.com>; Jared Jensen <jj@blackstoneproducts.com>; Tann Tueller <tann@blackstoneproducts.com>; Trevor  Gonzalez <trevor@blackstoneproducts.com>; Vance  Jensen <vance@blackstoneproducts.com>; Import <import@blackstoneproducts.com>; Ian Dahle <ian@blackstoneproducts.com> ; Keaton Manwaring <keaton@blackstoneproducts.com>'
+    Recipients = 'Keaton Manwaring <keaton@blackstoneproducts.com>'
+    #Recipients = 'Kaden Merrill <kaden.merrill@blackstoneproducts.com>;Christian Elkins<christian@blackstoneproducts.com>;Steven Bassett<steveb@blackstoneproducts.com>;Chloe Bowman<chloe@blackstoneproducts.com>; Canon Schenk<Canon.schenk@blackstoneproducts.com>; Cameron Gardner<cameron.gardner@blackstoneproducts.com>;Kalin Hansen<kalin.hansen@blackstoneproducts.com>;Abby Griffeth<abbyg@blackstoneproducts.com>;Chris  Tucket <tchris@blackstoneproducts.com>;Spencer Stratton <spencer@blackstoneproducts.com>;Aaron Smart <aaron@blackstoneproducts.com>; Logan Rondash <logan@blackstoneproducts.com>; Chris Brown <chris@blackstoneproducts.com>; Darren Cole <darren@blackstoneproducts.com>; David Anderson <davida@blackstoneproducts.com>; Joyce Jensen <Joyce@blackstoneproducts.com>; Keaton Manwaring <keaton@blackstoneproducts.com>; Kjersti Green <kgreen@blackstoneproducts.com>; Kyler Hansen <kyler@blackstoneproducts.com>; Mark Malen <mark@blackstoneproducts.com>; Michael Jenkins <mjenkins@blackstoneproducts.com>; Mike Midgley <mike@blackstoneproducts.com>; Mike Moser <mike.moser@blackstoneproducts.com>; Perry Jensen <Perry@blackstoneproducts.com>; Ty H <ty@blackstoneproducts.com>; Tom Newman <tom@blackstoneproducts.com>; Nicholle Anderson <nicholle@blackstoneproducts.com>; Clayton Shaw <clayton@blackstoneproducts.com>;  Holley Creger <Holley@blackstoneproducts.com>; Venessa P <venessa@blackstoneproducts.com>; Travis Cox <travis@blackstoneproducts.com>; Jake D <Jake@blackstoneproducts.com>; Brad Wheelwright <brad@blackstoneproducts.com>; Jared Jensen <jj@blackstoneproducts.com>; Tann Tueller <tann@blackstoneproducts.com>; Trevor  Gonzalez <trevor@blackstoneproducts.com>; Vance  Jensen <vance@blackstoneproducts.com>; Import <import@blackstoneproducts.com>; Ian Dahle <ian@blackstoneproducts.com> ; Keaton Manwaring <keaton@blackstoneproducts.com>'
+    email_pattern = r'<([^>]+)>'
+    email_list = re.findall(email_pattern, Recipients)
 
     domo = Domo('21cb74ca-7f01-4fc2-98ff-4458de43561b','44434b52cad91ad48371774134911eff6c6d2a5f8fa582f764ee5a5c31ddb5ef')
 
@@ -354,6 +361,7 @@ def main():
         Partners_Trade = 0
         Retail_Store = 0
         HC_Group = 0 
+        WFS = 0 
 
         current_inventory = Netsuite_Inventory[Netsuite_Inventory['Item'] == SKU]
         current_inventory.reset_index(inplace = True)
@@ -379,6 +387,8 @@ def main():
                 Retail_Store += int(float(current_inventory['On Hand'][row]))
             elif current_inventory['Location'][row] == 'HC Group':
                 HC_Group += int(float(current_inventory['On Hand'][row]))
+            elif current_inventory['Location'][row] == 'WFS':
+                WFS += int(float(current_inventory['On Hand'][row]))
         
 
 
@@ -444,11 +454,11 @@ def main():
         ws.cell(row=6,column=10).alignment = center
         ws.cell(row=6,column=10,value=Retail_Store)
 
-        #ws.cell(row=6,column=9,value='Keyword SLC:')
-        #ws.cell(row=6,column=9).font = underline
-        #ws.cell(row=6,column=9).alignment = right
-        #ws.cell(row=6,column=10).alignment = center
-        #ws.cell(row=6,column=10,value=Keyword_SLC)
+        ws.cell(row=9,column=9,value='WFS:')
+        ws.cell(row=9,column=9).font = underline
+        ws.cell(row=9,column=9).alignment = right
+        ws.cell(row=9,column=10).alignment = center
+        ws.cell(row=9,column=10,value=WFS)
 
         ws.cell(row=7,column=9,value='Clearfield:')
         ws.cell(row=7,column=9).font = underline
@@ -1025,39 +1035,68 @@ def main():
     #save workbook
     wb.save(book_name)
 
-    # Send Email 
-    try:
-        outlook = win32com.client.gencache.EnsureDispatch('Outlook.Application')
+    # SMTP server configuration
+    smtp_server = "smtp.local.blackstoneproducts.com"  
+    smtp_port = 25  
 
-    except AttributeError:
-        MODULE_LIST = [m.__name__ for m in sys.modules.values()]
-        for module in MODULE_LIST:
-            if re.match(r'win32com\.gen_py\..+', module):
-                del sys.modules[module]
-        shutil.rmtree(os.path.join(os.environ.get('LOCALAPPDATA'), 'Temp', 'gen_py'))
-        outlook = win32com.client.gencache.EnsureDispatch('Outlook.Application')
+    # Content
+    sender_email = "keaton@blackstoneproducts.com"
+    subject = 'Inventory Wizard - {:%m/%d/%y}'.format(datetime.date.today())
+    file_path = r'C:\Users\Keaton\Documents\IW4\\' + book_name
+    file_name = book_name
 
-    new_mail = outlook.CreateItem(0)
+    # Create the email
+    msg = MIMEMultipart()
+    msg["From"] = sender_email
+    msg["To"] = ", ".join(email_list)
+    msg["Subject"] = subject
+    body = """Hi all,
 
-    new_mail.Subject = 'Inventory Wizard - {:%m/%d/%y}'.format(datetime.date.today())
-    new_mail.Body = """Hi all,
+    See attached for today's Inventory Wizard.
     
-See attached for today's Inventory Wizard.
-    
 
-Best,
+    Best,
 
-Keaton Manwaring
+    Keaton Manwaring
     """
 
-    new_mail.To = Recipients
-
-    new_mail.Attachments.Add(Source = r'C:\Users\Keaton\Documents\IW4\\' + book_name)
-
-    new_mail.Send()
-
-     
+    # Attach the email body
+    msg.attach(MIMEText(body, "plain"))
     
+    try:
+        with open(file_path, "rb") as file:
+            # Set up the MIMEBase object for the attachment
+            part = MIMEBase("application", "vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            part.set_payload(file.read())
+            
+        # Encode the file in base64
+        encoders.encode_base64(part)
+        # Add the appropriate headers for the attachment
+        part.add_header(
+            "Content-Disposition",
+            f"attachment; filename={file_name}",
+        )
+        # Attach the file to the email
+        msg.attach(part)
+    except FileNotFoundError:
+        print(f"Error: The file '{file_path}' was not found.")
+        exit()
+
+    # Send the email
+    try:
+        # Connect to the SMTP server
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            # No login required since the server authenticates based on your IP
+            server.sendmail(sender_email, email_list, msg.as_string())  # Send the email
+            print("Email sent successfully!")
+    except Exception as e:
+        print(f"Error: {e}")
+
+
+
+
+
+
 
         
     
