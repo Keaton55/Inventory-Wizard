@@ -17,11 +17,12 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
+import mimetypes
 
 def main():
 
-    Recipients = 'Keaton Manwaring <keaton@blackstoneproducts.com>'
-    #Recipients = 'Kaden Merrill <kaden.merrill@blackstoneproducts.com>;Christian Elkins<christian@blackstoneproducts.com>;Steven Bassett<steveb@blackstoneproducts.com>;Chloe Bowman<chloe@blackstoneproducts.com>; Canon Schenk<Canon.schenk@blackstoneproducts.com>; Cameron Gardner<cameron.gardner@blackstoneproducts.com>;Kalin Hansen<kalin.hansen@blackstoneproducts.com>;Abby Griffeth<abbyg@blackstoneproducts.com>;Chris  Tucket <tchris@blackstoneproducts.com>;Spencer Stratton <spencer@blackstoneproducts.com>;Aaron Smart <aaron@blackstoneproducts.com>; Logan Rondash <logan@blackstoneproducts.com>; Chris Brown <chris@blackstoneproducts.com>; Darren Cole <darren@blackstoneproducts.com>; David Anderson <davida@blackstoneproducts.com>; Joyce Jensen <Joyce@blackstoneproducts.com>; Keaton Manwaring <keaton@blackstoneproducts.com>; Kjersti Green <kgreen@blackstoneproducts.com>; Kyler Hansen <kyler@blackstoneproducts.com>; Mark Malen <mark@blackstoneproducts.com>; Michael Jenkins <mjenkins@blackstoneproducts.com>; Mike Midgley <mike@blackstoneproducts.com>; Mike Moser <mike.moser@blackstoneproducts.com>; Perry Jensen <Perry@blackstoneproducts.com>; Ty H <ty@blackstoneproducts.com>; Tom Newman <tom@blackstoneproducts.com>; Nicholle Anderson <nicholle@blackstoneproducts.com>; Clayton Shaw <clayton@blackstoneproducts.com>;  Holley Creger <Holley@blackstoneproducts.com>; Venessa P <venessa@blackstoneproducts.com>; Travis Cox <travis@blackstoneproducts.com>; Jake D <Jake@blackstoneproducts.com>; Brad Wheelwright <brad@blackstoneproducts.com>; Jared Jensen <jj@blackstoneproducts.com>; Tann Tueller <tann@blackstoneproducts.com>; Trevor  Gonzalez <trevor@blackstoneproducts.com>; Vance  Jensen <vance@blackstoneproducts.com>; Import <import@blackstoneproducts.com>; Ian Dahle <ian@blackstoneproducts.com> ; Keaton Manwaring <keaton@blackstoneproducts.com>'
+    #Recipients = 'Keaton Manwaring <keaton@blackstoneproducts.com>'
+    Recipients = 'Kaden Merrill <kaden.merrill@blackstoneproducts.com>;Christian Elkins<christian@blackstoneproducts.com>;Steven Bassett<steveb@blackstoneproducts.com>;Chloe Bowman<chloe@blackstoneproducts.com>; Canon Schenk<Canon.schenk@blackstoneproducts.com>; Cameron Gardner<cameron.gardner@blackstoneproducts.com>;Kalin Hansen<kalin.hansen@blackstoneproducts.com>;Abby Griffeth<abbyg@blackstoneproducts.com>;Chris  Tucket <tchris@blackstoneproducts.com>;Spencer Stratton <spencer@blackstoneproducts.com>;Aaron Smart <aaron@blackstoneproducts.com>; Logan Rondash <logan@blackstoneproducts.com>; Chris Brown <chris@blackstoneproducts.com>; Darren Cole <darren@blackstoneproducts.com>; David Anderson <davida@blackstoneproducts.com>; Joyce Jensen <Joyce@blackstoneproducts.com>; Keaton Manwaring <keaton@blackstoneproducts.com>; Kjersti Green <kgreen@blackstoneproducts.com>; Kyler Hansen <kyler@blackstoneproducts.com>; Mark Malen <mark@blackstoneproducts.com>; Michael Jenkins <mjenkins@blackstoneproducts.com>; Mike Midgley <mike@blackstoneproducts.com>; Mike Moser <mike.moser@blackstoneproducts.com>; Perry Jensen <Perry@blackstoneproducts.com>; Ty H <ty@blackstoneproducts.com>; Tom Newman <tom@blackstoneproducts.com>; Nicholle Anderson <nicholle@blackstoneproducts.com>; Clayton Shaw <clayton@blackstoneproducts.com>;  Holley Creger <Holley@blackstoneproducts.com>; Venessa P <venessa@blackstoneproducts.com>; Travis Cox <travis@blackstoneproducts.com>; Jake D <Jake@blackstoneproducts.com>; Brad Wheelwright <brad@blackstoneproducts.com>; Jared Jensen <jj@blackstoneproducts.com>; Tann Tueller <tann@blackstoneproducts.com>; Trevor  Gonzalez <trevor@blackstoneproducts.com>; Vance  Jensen <vance@blackstoneproducts.com>; Import <import@blackstoneproducts.com>; Ian Dahle <ian@blackstoneproducts.com> ; Keaton Manwaring <keaton@blackstoneproducts.com>'
     email_pattern = r'<([^>]+)>'
     email_list = re.findall(email_pattern, Recipients)
 
@@ -1044,53 +1045,43 @@ def main():
     subject = 'Inventory Wizard - {:%m/%d/%y}'.format(datetime.date.today())
     file_path = r'C:\Users\Keaton\Documents\IW4\\' + book_name
     file_name = book_name
+    body = "Hey All, See attached for today's wizard."
 
-    # Create the email
+    # Email setup
     msg = MIMEMultipart()
     msg["From"] = sender_email
     msg["To"] = ", ".join(email_list)
     msg["Subject"] = subject
-    body = """Hi all,
-
-    See attached for today's Inventory Wizard.
-    
-
-    Best,
-
-    Keaton Manwaring
-    """
 
     # Attach the email body
     msg.attach(MIMEText(body, "plain"))
-    
-    try:
+
+    # Attach the file
+    if os.path.exists(file_path):
+        mime_type, _ = mimetypes.guess_type(file_path)
+        mime_type = mime_type if mime_type else "application/octet-stream"
+
         with open(file_path, "rb") as file:
-            # Set up the MIMEBase object for the attachment
-            part = MIMEBase("application", "vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            part = MIMEBase(*mime_type.split("/"))
             part.set_payload(file.read())
-            
-        # Encode the file in base64
+
         encoders.encode_base64(part)
-        # Add the appropriate headers for the attachment
-        part.add_header(
-            "Content-Disposition",
-            f"attachment; filename={file_name}",
-        )
-        # Attach the file to the email
+        part.add_header("Content-Disposition", f'attachment; filename="{file_name}"')
         msg.attach(part)
-    except FileNotFoundError:
+    else:
         print(f"Error: The file '{file_path}' was not found.")
         exit()
 
     # Send the email
     try:
-        # Connect to the SMTP server
         with smtplib.SMTP(smtp_server, smtp_port) as server:
-            # No login required since the server authenticates based on your IP
-            server.sendmail(sender_email, email_list, msg.as_string())  # Send the email
+            # Uncomment the below line if authentication is needed
+            # server.login(sender_email, sender_password) 
+
+            server.sendmail(sender_email, email_list, msg.as_string())
             print("Email sent successfully!")
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Error sending email: {e}")
 
 
 
