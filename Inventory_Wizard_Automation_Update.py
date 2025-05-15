@@ -5,7 +5,6 @@ import datetime
 import re
 from openpyxl.styles.numbers import FORMAT_PERCENTAGE
 from pydomo import Domo
-import win32com.client
 from pathlib import Path
 import shutil
 import os
@@ -22,7 +21,7 @@ import mimetypes
 def main():
 
     #Recipients = 'Keaton Manwaring <keaton@blackstoneproducts.com>'
-    Recipients = 'Kaden Merrill <kaden.merrill@blackstoneproducts.com>;Christian Elkins<christian@blackstoneproducts.com>;Steven Bassett<steveb@blackstoneproducts.com>;Chloe Bowman<chloe@blackstoneproducts.com>; Canon Schenk<Canon.schenk@blackstoneproducts.com>; Cameron Gardner<cameron.gardner@blackstoneproducts.com>;Kalin Hansen<kalin.hansen@blackstoneproducts.com>;Abby Griffeth<abbyg@blackstoneproducts.com>;Chris  Tucket <tchris@blackstoneproducts.com>;Spencer Stratton <spencer@blackstoneproducts.com>;Aaron Smart <aaron@blackstoneproducts.com>; Logan Rondash <logan@blackstoneproducts.com>; Chris Brown <chris@blackstoneproducts.com>; Darren Cole <darren@blackstoneproducts.com>; David Anderson <davida@blackstoneproducts.com>; Joyce Jensen <Joyce@blackstoneproducts.com>; Keaton Manwaring <keaton@blackstoneproducts.com>; Kjersti Green <kgreen@blackstoneproducts.com>; Kyler Hansen <kyler@blackstoneproducts.com>; Mark Malen <mark@blackstoneproducts.com>; Michael Jenkins <mjenkins@blackstoneproducts.com>; Mike Midgley <mike@blackstoneproducts.com>; Mike Moser <mike.moser@blackstoneproducts.com>; Perry Jensen <Perry@blackstoneproducts.com>; Ty H <ty@blackstoneproducts.com>; Tom Newman <tom@blackstoneproducts.com>; Nicholle Anderson <nicholle@blackstoneproducts.com>; Clayton Shaw <clayton@blackstoneproducts.com>;  Holley Creger <Holley@blackstoneproducts.com>; Venessa P <venessa@blackstoneproducts.com>; Travis Cox <travis@blackstoneproducts.com>; Jake D <Jake@blackstoneproducts.com>; Brad Wheelwright <brad@blackstoneproducts.com>; Jared Jensen <jj@blackstoneproducts.com>; Tann Tueller <tann@blackstoneproducts.com>; Trevor  Gonzalez <trevor@blackstoneproducts.com>; Vance  Jensen <vance@blackstoneproducts.com>; Import <import@blackstoneproducts.com>; Ian Dahle <ian@blackstoneproducts.com> ; Keaton Manwaring <keaton@blackstoneproducts.com>'
+    Recipients = 'Heidi Wilson <heidi@blackstoneproducts.com>;Kaden Merrill <kaden.merrill@blackstoneproducts.com>;Christian Elkins<christian@blackstoneproducts.com>;Steven Bassett<steveb@blackstoneproducts.com>;Chloe Bowman<chloe@blackstoneproducts.com>; Canon Schenk<Canon.schenk@blackstoneproducts.com>; Cameron Gardner<cameron.gardner@blackstoneproducts.com>;Kalin Hansen<kalin.hansen@blackstoneproducts.com>;Abby Griffeth<abbyg@blackstoneproducts.com>;Chris  Tucket <tchris@blackstoneproducts.com>;Spencer Stratton <spencer@blackstoneproducts.com>;Aaron Smart <aaron@blackstoneproducts.com>; Logan Rondash <logan@blackstoneproducts.com>; Chris Brown <chris@blackstoneproducts.com>; Darren Cole <darren@blackstoneproducts.com>; David Anderson <davida@blackstoneproducts.com>; Joyce Jensen <Joyce@blackstoneproducts.com>; Keaton Manwaring <keaton@blackstoneproducts.com>; Kjersti Green <kgreen@blackstoneproducts.com>; Kyler Hansen <kyler@blackstoneproducts.com>; Michael Jenkins <mjenkins@blackstoneproducts.com>; Mike Midgley <mike@blackstoneproducts.com>; Mike Moser <mike.moser@blackstoneproducts.com>; Perry Jensen <Perry@blackstoneproducts.com>; Ty H <ty@blackstoneproducts.com>; Tom Newman <tom@blackstoneproducts.com>; Nicholle Anderson <nicholle@blackstoneproducts.com>; Clayton Shaw <clayton@blackstoneproducts.com>;  Holley Creger <Holley@blackstoneproducts.com>; Venessa P <venessa@blackstoneproducts.com>; Travis Cox <travis@blackstoneproducts.com>; Jake D <Jake@blackstoneproducts.com>; Brad Wheelwright <brad@blackstoneproducts.com>; Jared Jensen <jj@blackstoneproducts.com>; Tann Tueller <tann@blackstoneproducts.com>; Trevor  Gonzalez <trevor@blackstoneproducts.com>; Vance  Jensen <vance@blackstoneproducts.com>; Import <import@blackstoneproducts.com>; Keaton Manwaring <keaton@blackstoneproducts.com>'
     email_pattern = r'<([^>]+)>'
     email_list = re.findall(email_pattern, Recipients)
 
@@ -512,13 +511,14 @@ def main():
         ws.cell(row=1,column=2).font = bold
 
         #Item Information Labels       
-        ws.cell(row=4,column=1,value='Product Group:')
-        ws.cell(row=5,column=1,value='Program Year:')
-        ws.cell(row=6,column=1,value='Item Status:')
-        ws.cell(row=7,column=1,value='Master Pack Quantity:')
-        ws.cell(row=8,column=1,value='Exclusivity:')
-        ws.cell(row=9,column=1,value='Factory:')
-        ws.cell(row=11,column=1,value='Import/Domestic:')
+        ws.cell(row=3,column=1,value='Product Group:')
+        ws.cell(row=4,column=1,value='Program Year:')
+        ws.cell(row=5,column=1,value='Item Status:')
+        ws.cell(row=6,column=1,value='Master Pack Quantity:')
+        ws.cell(row=7,column=1,value='Exclusivity:')
+        ws.cell(row=8,column=1,value='Factory:')
+        ws.cell(row=10,column=1,value='Import/Domestic:')
+        ws.cell(row=11,column=1,value = 'HTS Code:')
         ws.cell(row=12,column=1,value='Packaging Style:')
 
 
@@ -562,19 +562,21 @@ def main():
                 pass
             
 
-            ws.cell(row=11,column=2,value=info['Import Only'][item])
+            ws.cell(row=10,column=2,value=info['Import Only'][item])
 
 
 
             ws.cell(row=2,column=1,value=info['Display Name'][item])
-            ws.cell(row=4,column=2,value=info['Product Group'][item])
-            ws.cell(row=5,column=2,value=info['Program Year'][item])
-            ws.cell(row=6,column=2,value=info['Item Status'][item])
-            ws.cell(row=7,column=2,value= MP_Quantity)
-            ws.cell(row=8,column=2,value=info['Exclusivity'][item])
+            ws.cell(row=3,column=2,value=info['Product Group'][item])
+            ws.cell(row=4,column=2,value=info['Program Year'][item])
+            ws.cell(row=5,column=2,value=info['Item Status'][item])
+            ws.cell(row=6,column=2,value= MP_Quantity)
+            ws.cell(row=7,column=2,value=info['Exclusivity'][item])
             ws.cell(row=12,column=2,value=info['Packaging Style'][item])
-            ws.cell(row=9,column=2,value=factory)
+            ws.cell(row=8,column=2,value=factory)
+            ws.cell(row=11,column=2,value=info['HTS Code'][item])
             ws.cell(row=2,column=1).font = bold
+            ws.cell(row=3,column=2).font = bold
             ws.cell(row=4,column=2).font = bold
             ws.cell(row=5,column=2).font = bold
             ws.cell(row=6,column=2).font = bold
@@ -600,8 +602,8 @@ def main():
             ws.cell(row=10,column=13,value = date_last_updated)
 
             #40GP Conatiner Qty
-            ws.cell(row=10,column=1,value="40 HQ Container Qty")
-            ws.cell(row=10,column=2,value=info["QTY PER 40'HQ CONTAINER"][item]).font = bold
+            ws.cell(row=9,column=1,value="40 HQ Container Qty")
+            ws.cell(row=9,column=2,value=info["QTY PER 40'HQ CONTAINER"][item]).font = bold
 
 
             #Old SKU, New SKU
@@ -1041,9 +1043,10 @@ def main():
     smtp_port = 25  
 
     # Content
+    current_directory = os.getcwd()
     sender_email = "keaton@blackstoneproducts.com"
     subject = 'Inventory Wizard - {:%m/%d/%y}'.format(datetime.date.today())
-    file_path = r'C:\Users\Keaton\Documents\IW4\\' + book_name
+    file_path = os.path.join(current_directory, book_name)
     file_name = book_name
     body = "Hey All, See attached for today's wizard."
 
