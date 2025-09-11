@@ -1,4 +1,3 @@
-import csv
 from openpyxl import Workbook
 import openpyxl
 import datetime
@@ -6,9 +5,7 @@ import re
 from openpyxl.styles.numbers import FORMAT_PERCENTAGE
 from pydomo import Domo
 from pathlib import Path
-import shutil
 import os
-import sys
 import numpy as np
 import pandas as pd
 import smtplib
@@ -21,7 +18,7 @@ import mimetypes
 def main():
 
     #Recipients = 'Keaton Manwaring <keaton@blackstoneproducts.com>'
-    Recipients = 'Heidi Wilson <heidi@blackstoneproducts.com>;Kaden Merrill <kaden.merrill@blackstoneproducts.com>;Christian Elkins<christian@blackstoneproducts.com>;Steven Bassett<steveb@blackstoneproducts.com>;Chloe Bowman<chloe@blackstoneproducts.com>; Canon Schenk<Canon.schenk@blackstoneproducts.com>; Cameron Gardner<cameron.gardner@blackstoneproducts.com>;Kalin Hansen<kalin.hansen@blackstoneproducts.com>;Abby Griffeth<abbyg@blackstoneproducts.com>;Chris  Tucket <tchris@blackstoneproducts.com>;Spencer Stratton <spencer@blackstoneproducts.com>;Aaron Smart <aaron@blackstoneproducts.com>; Logan Rondash <logan@blackstoneproducts.com>; Chris Brown <chris@blackstoneproducts.com>; Darren Cole <darren@blackstoneproducts.com>; David Anderson <davida@blackstoneproducts.com>; Joyce Jensen <Joyce@blackstoneproducts.com>; Keaton Manwaring <keaton@blackstoneproducts.com>; Kjersti Green <kgreen@blackstoneproducts.com>; Kyler Hansen <kyler@blackstoneproducts.com>; Michael Jenkins <mjenkins@blackstoneproducts.com>; Mike Midgley <mike@blackstoneproducts.com>; Mike Moser <mike.moser@blackstoneproducts.com>; Perry Jensen <Perry@blackstoneproducts.com>; Ty H <ty@blackstoneproducts.com>; Tom Newman <tom@blackstoneproducts.com>; Nicholle Anderson <nicholle@blackstoneproducts.com>; Clayton Shaw <clayton@blackstoneproducts.com>;  Holley Creger <Holley@blackstoneproducts.com>; Venessa P <venessa@blackstoneproducts.com>; Travis Cox <travis@blackstoneproducts.com>; Jake D <Jake@blackstoneproducts.com>; Brad Wheelwright <brad@blackstoneproducts.com>; Jared Jensen <jj@blackstoneproducts.com>; Tann Tueller <tann@blackstoneproducts.com>; Trevor  Gonzalez <trevor@blackstoneproducts.com>; Vance  Jensen <vance@blackstoneproducts.com>; Import <import@blackstoneproducts.com>; Keaton Manwaring <keaton@blackstoneproducts.com>'
+    Recipients = 'Kaden Merrill <kaden.merrill@blackstoneproducts.com>;Christian Elkins<christian@blackstoneproducts.com>;Steven Bassett<steveb@blackstoneproducts.com>;Chloe Bowman<chloe@blackstoneproducts.com>; Canon Schenk<Canon.schenk@blackstoneproducts.com>; Cameron Gardner<cameron.gardner@blackstoneproducts.com>;Kalin Hansen<kalin.hansen@blackstoneproducts.com>;Abby Griffeth<abbyg@blackstoneproducts.com>;Spencer Stratton <spencer@blackstoneproducts.com>;Aaron Smart <aaron@blackstoneproducts.com>; Logan Rondash <logan@blackstoneproducts.com>; Chris Brown <chris@blackstoneproducts.com>; Darren Cole <darren@blackstoneproducts.com>; David Anderson <davida@blackstoneproducts.com>; Keaton Manwaring <keaton@blackstoneproducts.com>; Kjersti Green <kgreen@blackstoneproducts.com>; Kyler Hansen <kyler@blackstoneproducts.com>; Michael Jenkins <mjenkins@blackstoneproducts.com>; Mike Midgley <mike@blackstoneproducts.com>; Mike Moser <mike.moser@blackstoneproducts.com>; Perry Jensen <Perry@blackstoneproducts.com>; Ty H <ty@blackstoneproducts.com>; Tom Newman <tom@blackstoneproducts.com>; Nicholle Anderson <nicholle@blackstoneproducts.com>;  Holley Creger <Holley@blackstoneproducts.com>; Venessa P <venessa@blackstoneproducts.com>; Travis Cox <travis@blackstoneproducts.com>; Jake D <Jake@blackstoneproducts.com>; Brad Wheelwright <brad@blackstoneproducts.com>; Jared Jensen <jj@blackstoneproducts.com>; Tann Tueller <tann@blackstoneproducts.com>; Trevor  Gonzalez <trevor@blackstoneproducts.com>; Vance  Jensen <vance@blackstoneproducts.com>; Import <import@blackstoneproducts.com>; Tanner Gregory <tannerg@blackstoneproducts.com>; Logan Rondash <logan@blackstoneproducts.com>; Heidi Wilson <heidi@blackstoneproducts.com>;Taylor Ricks <taylor@blackstoneproducts.com>; Nicholle Anderson <nicholle@blackstoneproducts.com>; Keaton Manwaring<keaton@blackstoneproducts.com>'
     email_pattern = r'<([^>]+)>'
     email_list = re.findall(email_pattern, Recipients)
 
@@ -362,6 +359,7 @@ def main():
         Retail_Store = 0
         HC_Group = 0 
         WFS = 0 
+        fleming = 0 
 
         current_inventory = Netsuite_Inventory[Netsuite_Inventory['Item'] == SKU]
         current_inventory.reset_index(inplace = True)
@@ -387,8 +385,10 @@ def main():
                 Retail_Store += int(float(current_inventory['On Hand'][row]))
             elif current_inventory['Location'][row] == 'HC Group':
                 HC_Group += int(float(current_inventory['On Hand'][row]))
-            elif current_inventory['Location'][row] == 'WFS':
+            elif current_inventory['Location'][row] == 'Walmart WFS':
                 WFS += int(float(current_inventory['On Hand'][row]))
+            elif current_inventory['Location'][row] == 'Fleming Sales':
+                fleming += int(float(current_inventory['On Hand'][row]))
         
 
 
@@ -460,6 +460,12 @@ def main():
         ws.cell(row=9,column=10).alignment = center
         ws.cell(row=9,column=10,value=WFS)
 
+        ws.cell(row=10,column=9,value='Fleming Sales:')
+        ws.cell(row=10,column=9).font = underline
+        ws.cell(row=10,column=9).alignment = right
+        ws.cell(row=10,column=10).alignment = center
+        ws.cell(row=10,column=10,value=fleming)
+
         ws.cell(row=7,column=9,value='Clearfield:')
         ws.cell(row=7,column=9).font = underline
         ws.cell(row=7,column=9).alignment = right
@@ -489,6 +495,8 @@ def main():
         ws.cell(row=7,column=12).alignment = right
         ws.cell(row=7,column=13).alignment = center
         ws.cell(row=7,column=13,value=rework)
+
+        
 
         ws.cell(row=10,column=6,value='Split:')
         ws.cell(row=10,column=6).font = underline
